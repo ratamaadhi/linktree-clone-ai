@@ -1,0 +1,6 @@
+# mgrep configuration for next15-starter-template
+# Maximum file size in bytes (default: 10485760 / 10MB)
+maxFileSize: 10485760
+
+# Maximum number of files to upload (default: 10000)
+maxFileCount: 10000
