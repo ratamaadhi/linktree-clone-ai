@@ -10,7 +10,8 @@
 | Phase 4: Frontend Components        | ✅ Complete    | 5/5 tasks |
 | Phase 5: Live Preview               | ✅ Complete    | 6/6 tasks |
 | Phase 6: Analytics Tracking         | ✅ Complete    | 3/3 tasks |
-| Phase 7: Pages & Routing            | ⏸️ In Progress | 1/5 tasks |
+| Phase 7.1: Auth Pages               | 📝 Documented  | 9/9 tasks |
+| Phase 7.2: Dashboard Pages          | ⏸️ Not Started | 1/5 tasks |
 | Phase 8: Testing                    | ⏸️ Not Started | 0/4 tasks |
 | Phase 9: Performance & Optimization | ⏸️ Not Started | 0/4 tasks |
 | Phase 10: Deployment & Launch       | ⏸️ Not Started | 0/4 tasks |
@@ -68,6 +69,20 @@
 - Preview controls: `components/theme/live-preview/preview-controls.tsx` (Refresh, open new tab, copy URL, fullscreen)
 - Device selector: `components/theme/live-preview/device-selector.tsx` (Mobile, tablet, desktop, custom sizes)
 
+**Phase 7.1: Auth Pages (Documentation Added):**
+
+_Documentation only. Implementation pending. Full code examples added to guide. Files to be created:_
+
+- Sign in page
+- Sign up page
+- Email verification page
+- Forgot password page
+- Reset password page
+- Auth layout wrapper
+- Dashboard auth guard
+
+_Note: Documentation includes complete Better-Auth v1.4.10 integration examples with TypeScript types, client setup, and all required auth pages. Ready for implementation when needed._
+
 **Phase 6 - Analytics Tracking (Complete):**
 
 - User agent parser: `lib/analytics/user-agent-parser.ts` (Detects device type, browser, OS)
@@ -82,7 +97,7 @@
 
 ### Next Immediate Steps
 
-1. **Continue Phase 7:** Complete dashboard pages (dashboard layout, dashboard home, bio page editor)
+1. **Start Phase 7.2:** Complete dashboard pages (dashboard layout, dashboard home, bio page editor)
 2. **Phase 8:** Implement testing (unit tests, integration tests, E2E tests)
 
 ---
@@ -96,10 +111,17 @@
 5. [Phase 4: Frontend Components](#step-4-frontend-components)
 6. [Phase 5: Live Preview](#step-5-live-preview)
 7. [Phase 6: Analytics Tracking](#step-6-analytics-tracking)
-8. [Phase 7: Pages & Routing](#step-7-pages--routing)
+8. [Phase 7. Pages & Routing](#step-7-pages--routing)
 9. [Phase 8: Testing](#step-8-testing)
 10. [Phase 9: Performance & Optimization](#step-9-performance--optimization)
 11. [Phase 10: Deployment & Launch](#step-10-deployment--launch)
+
+---
+
+## Quick Navigation: Auth Pages
+
+- [7.1: Auth Pages Implementation](#step-71-auth-pages-) - Sign in, sign up, email verification, password reset
+- [7.2: Dashboard Pages](#step-72-dashboard-pages-) - Dashboard home, bio page editor
 
 ---
 
@@ -3048,6 +3070,860 @@ Use this checklist to track your implementation progress:
 - [x] Create analytics utilities (`lib/analytics/user-agent-parser.ts`, `ip-hasher.ts`)
 - [x] Create client-side tracker (`lib/analytics/tracker.ts`)
 - [x] Create analytics API endpoint (`app/api/v1/track-click/route.ts`)
+
+### Phase 7.3: Auth Pages 🆕
+
+This section provides complete implementation guidance for authentication pages using **Better-Auth v1.4.10**.
+
+#### Better-Auth Client Setup
+
+**File:** `lib/auth/client.ts`
+
+First, create a client instance for Better-Auth:
+
+```typescript
+import { createAuthClient } from 'better-auth/react';
+
+export const authClient = createAuthClient({
+  baseURL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  plugins: [],
+});
+
+// Type exports
+export type Session = typeof authClient.$Infer.Session;
+export type User = typeof authClient.$Infer.User;
+```
+
+**File:** `app/api/auth/[...all]/route.ts`
+
+Better-Auth API handler for Next.js App Router:
+
+```typescript
+import { auth } from '@/lib/auth';
+import { toNextJsHandler } from 'better-auth/next-js';
+
+export const { GET, POST } = toNextJsHandler(auth);
+```
+
+---
+
+#### 1. Sign In Page
+
+**File:** `app/(auth)/sign-in/page.tsx`
+
+```typescript
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Mail, Lock } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function SignInPage() {
+  const router = useRouter();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  async function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: '/dashboard',
+      });
+
+      toast.success('Sign in successful! Redirecting to dashboard...');
+      router.push('/dashboard');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to sign in. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+          <CardDescription>
+            Enter your email and password to access your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Don't have an account?{' '}
+            <Link href="/sign-up" className="text-primary hover:underline font-medium">
+              Sign up
+            </Link>
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex justify-between">
+          <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-primary">
+            Forgot password?
+          </Link>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
+```
+
+**Commands:**
+
+```bash
+# Install sonner for toast notifications (if not installed)
+bun add sonner
+
+# Add ToastProvider to layout
+# Update app/layout.tsx to include:
+import { Toaster } from 'sonner';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Toaster position="top-center" />
+      </body>
+    </html>
+  );
+}
+```
+
+---
+
+#### 2. Sign Up Page
+
+**File:** `app/(auth)/sign-up/page.tsx`
+
+```typescript
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Mail, Lock, User } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function SignUpPage() {
+  const router = useRouter();
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await authClient.signUp.email({
+        email,
+        password,
+        name,
+        callbackURL: '/dashboard',
+      });
+
+      toast.success('Account created! Check your email for verification.');
+      router.push('/sign-in');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create account. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
+          <CardDescription>
+            Sign up to start creating your bio pages
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                  required
+                  minLength={8}
+                  disabled={loading}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Password must be at least 8 characters
+              </p>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Creating account...' : 'Create Account'}
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link href="/sign-in" className="text-primary hover:underline font-medium">
+              Sign in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+---
+
+#### 3. Email Verification Page
+
+**File:** `app/(auth)/verify-email/page.tsx`
+
+```typescript
+'use client';
+
+import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function VerifyEmailPage() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+  const [verifying, setVerifying] = React.useState(false);
+  const [verified, setVerified] = React.useState(false);
+
+  React.useEffect(() => {
+    async function verifyEmail() {
+      if (!token) return;
+
+      setVerifying(true);
+      try {
+        await authClient.verifyEmail({
+          token,
+        });
+
+        setVerified(true);
+        toast.success('Email verified successfully!');
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to verify email.');
+      } finally {
+        setVerifying(false);
+      }
+    }
+
+    verifyEmail();
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle>Invalid Verification Link</CardTitle>
+            <CardDescription>
+              The verification link is invalid or has expired.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild variant="outline">
+              <Link href="/sign-in">Back to Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md text-center">
+        <CardHeader>
+          <CardTitle>Email Verification</CardTitle>
+          <CardDescription>
+            {verifying
+              ? 'Verifying your email address...'
+              : verified
+              ? 'Your email has been verified!'
+              : 'Email verification failed'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-4">
+          {verifying ? (
+            <Loader2 className="h-12 w-12 animate-spin text-muted-foreground" />
+          ) : verified ? (
+            <>
+              <CheckCircle2 className="h-16 w-16 text-green-500" />
+              <div className="space-y-2">
+                <p className="text-muted-foreground">
+                  You can now sign in to your account
+                </p>
+                <Button asChild className="w-full">
+                  <Link href="/sign-in">Go to Sign In</Link>
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                The verification link may have expired. Please request a new verification email.
+              </p>
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/sign-in">Back to Sign In</Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+---
+
+#### 4. Forgot Password Page
+
+**File:** `app/(auth)/forgot-password/page.tsx`
+
+```typescript
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Mail, ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function ForgotPasswordPage() {
+  const router = useRouter();
+  const [email, setEmail] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [sent, setSent] = React.useState(false);
+
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await authClient.forgetPassword({
+        email,
+        redirectTo: '/reset-password',
+      });
+
+      setSent(true);
+      toast.success('Password reset link sent to your email!');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send reset link. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (sent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
+            <CardDescription>
+              We've sent a password reset link to your email address
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Click the link in the email to reset your password. The link will expire in 24 hours.
+            </p>
+            <div className="space-y-3">
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/sign-in">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Sign In
+                </Link>
+              </Button>
+              <Button
+                onClick={() => setSent(false)}
+                variant="ghost"
+                className="w-full"
+              >
+                Send Another Link
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Forgot Password</CardTitle>
+          <CardDescription>
+            Enter your email and we'll send you a password reset link
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                  required
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            Remember your password?{' '}
+            <Link href="/sign-in" className="text-primary hover:underline font-medium">
+              Sign in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+---
+
+#### 5. Reset Password Page
+
+**File:** `app/(auth)/reset-password/page.tsx`
+
+```typescript
+'use client';
+
+import * as React from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+export default function ResetPasswordPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
+
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
+
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await authClient.resetPassword({
+        token: token!,
+        password,
+      });
+
+      setSuccess(true);
+      toast.success('Password reset successfully!');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to reset password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle>Invalid Reset Link</CardTitle>
+            <CardDescription>
+              The password reset link is invalid or has expired.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild variant="outline">
+              <Link href="/forgot-password">Request New Link</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Password Reset Successful</CardTitle>
+            <CardDescription>
+              Your password has been reset. You can now sign in with your new password.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
+            <Button asChild className="w-full">
+              <Link href="/sign-in">Go to Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
+          <CardDescription>
+            Enter your new password below
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">New Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pr-10 pl-10"
+                  required
+                  minLength={8}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pr-10 pl-10"
+                  required
+                  minLength={8}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Resetting...' : 'Reset Password'}
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/sign-in">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Sign In
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+---
+
+#### 6. Auth Layout
+
+**File:** `app/(auth)/layout.tsx`
+
+```typescript
+import * as React from 'react';
+import Link from 'next/link';
+import { authClient } from '@/lib/auth/client';
+import { Button } from '@/components/ui/button';
+
+export default function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { data: session } = authClient.useSession();
+
+  // Redirect to dashboard if already authenticated
+  React.useEffect(() => {
+    if (session) {
+      window.location.href = '/dashboard';
+    }
+  }, [session]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      <div className="container flex min-h-screen flex-col items-center justify-center">
+        <div className="mx-auto w-full max-w-6xl px-4">
+          <header className="mb-8 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-xl font-bold text-primary-foreground">
+                  B
+                </span>
+              </div>
+              <span className="text-xl font-bold">BioLink Pro</span>
+            </Link>
+            <Button variant="ghost" asChild>
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          </header>
+
+          <main className="flex flex-1 items-center justify-center">
+            {children}
+          </main>
+
+          <footer className="mt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} BioLink Pro. All rights reserved.</p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+#### 7. Dashboard Auth Guard
+
+**File:** `app/(dashboard)/layout.tsx`
+
+```typescript
+import * as React from 'react';
+import { redirect } from 'next/navigation';
+import { authClient } from '@/lib/auth/client';
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    redirect('/sign-in');
+  }
+
+  return <>{children}</>;
+}
+```
+
+---
+
+#### Summary
+
+**Files Created:**
+
+- `lib/auth/client.ts` - Better-Auth client instance
+- `app/api/auth/[...all]/route.ts` - Better-Auth API handler
+- `app/(auth)/sign-in/page.tsx` - Sign in page
+- `app/(auth)/sign-up/page.tsx` - Sign up page
+- `app/(auth)/verify-email/page.tsx` - Email verification page
+- `app/(auth)/forgot-password/page.tsx` - Forgot password page
+- `app/(auth)/reset-password/page.tsx` - Reset password page
+- `app/(auth)/layout.tsx` - Auth layout wrapper
+- `app/(dashboard)/layout.tsx` - Dashboard auth guard
+
+**Dependencies Added:**
+
+- `sonner` - Toast notifications
+
+**Key Features:**
+
+- Email & password authentication
+- Email verification
+- Password reset flow
+- Protected route middleware
+- Session management with Better-Auth
+- Responsive design with shadcn/ui components
+- Loading states and error handling
+- Toast notifications for user feedback
+
+**Next Steps:**
+
+1. Test all auth flows locally
+2. Configure email service (Resend) in Better-Auth
+3. Add social auth providers if needed (GitHub, Google)
+4. Implement protected API routes
+5. Add user profile settings page
+
+---
 
 ### Phase 7: Pages & Routing ⏸️ NOT STARTED
 
