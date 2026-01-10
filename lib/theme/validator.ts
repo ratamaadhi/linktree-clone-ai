@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { BioPageThemeConfig, BioLinkThemeConfig } from './types';
 
-const hexColorRegex = /^#([0-9A-Fa-f]{3}){1,2}$/;
+const hexColorRegex = /^#([0-9A-Fa-f]{3,4}){1,2}$/;
 
 export const bioPageThemeConfigSchema = z.object({
   primaryColor: z.string().regex(hexColorRegex),

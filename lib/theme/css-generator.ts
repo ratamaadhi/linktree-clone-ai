@@ -69,7 +69,13 @@ function sanitizeColor(color: string): string {
 function sanitizeUnit(value: string): string {
   if (typeof value !== 'string') return '0px';
 
-  return value.replace(/[^0-9.a-zA-Z-]/g, '').trim() || '0px';
+  const sanitized = value.replace(/[^0-9a-zA-Z%]/g, '').trim();
+
+  if (!sanitized || !/^[\d.]+(?:px|em|rem|%)?$/.test(sanitized)) {
+    return '0px';
+  }
+
+  return sanitized;
 }
 
 export function generateThemeCSS(theme: BioPageThemeConfig): string {
@@ -179,6 +185,8 @@ export function generateLinkThemeCSS(linkTheme: BioLinkThemeConfig): string {
 function getBackgroundCSS(theme: BioPageThemeConfig): string {
   switch (theme.backgroundType) {
     case 'gradient':
+      // Note: backgroundGradient may be undefined despite backgroundType === 'gradient'
+      // Fallback to solid backgroundColor in this case for defense in depth
       if (theme.backgroundGradient) {
         const { type, direction, colors } = theme.backgroundGradient;
         const sanitizedColors = colors.map(sanitizeColor);
@@ -191,8 +199,20 @@ function getBackgroundCSS(theme: BioPageThemeConfig): string {
       return sanitizeColor(theme.backgroundColor);
     case 'image':
       if (theme.backgroundImage) {
+        const validPositions = [
+          'cover',
+          'contain',
+          'center',
+          'top',
+          'bottom',
+          'left',
+          'right',
+        ];
+        const position = validPositions.includes(theme.backgroundImage.position)
+          ? theme.backgroundImage.position
+          : 'center';
         return `
-          url("${sanitizeURL(theme.backgroundImage.url)}") ${theme.backgroundImage.position} / cover no-repeat,
+          url("${sanitizeURL(theme.backgroundImage.url)}") ${position} / cover no-repeat,
           ${sanitizeColor(theme.backgroundColor)}
         `;
       }

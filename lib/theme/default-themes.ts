@@ -1,7 +1,8 @@
 import type { BioPageThemeConfig } from './types';
 
-export const defaultThemes: BioPageThemeConfig[] = [
+export const defaultThemes: (BioPageThemeConfig & { name: string })[] = [
   {
+    name: 'default',
     primaryColor: '#3b82f6',
     secondaryColor: '#8b5cf6',
     backgroundColor: '#ffffff',
@@ -38,6 +39,7 @@ export const defaultThemes: BioPageThemeConfig[] = [
     backgroundType: 'solid',
   },
   {
+    name: 'dark',
     primaryColor: '#60a5fa',
     secondaryColor: '#a78bfa',
     backgroundColor: '#111827',
@@ -74,6 +76,7 @@ export const defaultThemes: BioPageThemeConfig[] = [
     backgroundType: 'solid',
   },
   {
+    name: 'pink',
     primaryColor: '#ec4899',
     secondaryColor: '#f472b6',
     backgroundColor: '#fdf2f8',
@@ -115,6 +118,7 @@ export const defaultThemes: BioPageThemeConfig[] = [
     },
   },
   {
+    name: 'green',
     primaryColor: '#10b981',
     secondaryColor: '#34d399',
     backgroundColor: '#ecfdf5',
@@ -151,6 +155,7 @@ export const defaultThemes: BioPageThemeConfig[] = [
     backgroundType: 'solid',
   },
   {
+    name: 'amber-grid',
     primaryColor: '#f59e0b',
     secondaryColor: '#fbbf24',
     backgroundColor: '#1e293b',
@@ -196,9 +201,8 @@ export function getDefaultTheme(): BioPageThemeConfig {
   return defaultThemes[0];
 }
 
-export function getThemeByName(name: string): BioPageThemeConfig | undefined {
-  const themeNames = ['default', 'dark', 'pink', 'green', 'amber-grid'];
-
-  const index = themeNames.indexOf(name);
-  return index !== -1 ? defaultThemes[index] : undefined;
+export function getThemeByName(
+  name: string
+): (BioPageThemeConfig & { name: string }) | undefined {
+  return defaultThemes.find((theme) => theme.name === name);
 }

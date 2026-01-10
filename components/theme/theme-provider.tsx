@@ -3,6 +3,7 @@
 import * as React from 'react';
 import type { BioPageThemeConfig } from '@/lib/theme/types';
 import { getDefaultTheme } from '@/lib/theme/default-themes';
+import { deepMerge } from '@/lib/utils/merge';
 
 interface ThemeContextValue {
   theme: BioPageThemeConfig;
@@ -13,35 +14,6 @@ interface ThemeContextValue {
 const ThemeContext = React.createContext<ThemeContextValue | undefined>(
   undefined
 );
-
-function deepMerge<T>(target: T, source: Partial<T>): T {
-  const result = { ...target };
-
-  for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key)) {
-      const sourceValue = source[key];
-      const targetValue = result[key as keyof T];
-
-      if (
-        sourceValue !== null &&
-        typeof sourceValue === 'object' &&
-        !Array.isArray(sourceValue) &&
-        targetValue !== null &&
-        typeof targetValue === 'object' &&
-        !Array.isArray(targetValue)
-      ) {
-        result[key as keyof T] = deepMerge(
-          targetValue,
-          sourceValue
-        ) as T[keyof T];
-      } else {
-        result[key as keyof T] = sourceValue as T[keyof T];
-      }
-    }
-  }
-
-  return result;
-}
 
 export function ThemeProvider({
   children,
