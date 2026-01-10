@@ -6,11 +6,7 @@ export const buttonStyleEnum = pgEnum('button_style', [
   'ghost',
 ]);
 
-export const spacingEnum = pgEnum('spacing', [
-  'compact',
-  'normal',
-  'relaxed',
-]);
+export const spacingEnum = pgEnum('spacing', ['compact', 'normal', 'relaxed']);
 
 export const layoutEnum = pgEnum('layout', ['vertical', 'grid']);
 
@@ -52,11 +48,7 @@ export const iconPositionEnum = pgEnum('icon_position', [
   'none',
 ]);
 
-export const iconSizeEnum = pgEnum('icon_size', [
-  'small',
-  'medium',
-  'large',
-]);
+export const iconSizeEnum = pgEnum('icon_size', ['small', 'medium', 'large']);
 
 export const imagePositionEnum = pgEnum('image_position', [
   'left',
@@ -64,11 +56,7 @@ export const imagePositionEnum = pgEnum('image_position', [
   'background',
 ]);
 
-export const imageSizeEnum = pgEnum('image_size', [
-  'small',
-  'medium',
-  'large',
-]);
+export const imageSizeEnum = pgEnum('image_size', ['small', 'medium', 'large']);
 
 export const backgroundTypeEnum = pgEnum('background_type', [
   'solid',
@@ -76,16 +64,9 @@ export const backgroundTypeEnum = pgEnum('background_type', [
   'image',
 ]);
 
-export const alignmentEnum = pgEnum('alignment', [
-  'left',
-  'center',
-  'right',
-]);
+export const alignmentEnum = pgEnum('alignment', ['left', 'center', 'right']);
 
-export const gradientTypeEnum = pgEnum('gradient_type', [
-  'linear',
-  'radial',
-]);
+export const gradientTypeEnum = pgEnum('gradient_type', ['linear', 'radial']);
 
 export const bgPositionEnum = pgEnum('bg_position', [
   'cover',

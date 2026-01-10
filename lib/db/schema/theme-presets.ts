@@ -1,4 +1,13 @@
-import { pgTable, uuid, text, boolean, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  boolean,
+  integer,
+  timestamp,
+  jsonb,
+  index,
+} from 'drizzle-orm/pg-core';
 import { user } from './auth';
 import { organizations } from './organization';
 
@@ -9,10 +18,9 @@ export const themePresets = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    organizationId: uuid('organization_id').references(
-      () => organizations.id,
-      { onDelete: 'cascade' }
-    ),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
 
     // Preset Information
     name: text('name').notNull(),

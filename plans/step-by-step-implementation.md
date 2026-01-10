@@ -68,11 +68,7 @@ export const buttonStyleEnum = pgEnum('button_style', [
   'ghost',
 ]);
 
-export const spacingEnum = pgEnum('spacing', [
-  'compact',
-  'normal',
-  'relaxed',
-]);
+export const spacingEnum = pgEnum('spacing', ['compact', 'normal', 'relaxed']);
 
 export const layoutEnum = pgEnum('layout', ['vertical', 'grid']);
 
@@ -104,6 +100,7 @@ export const avatarShapeEnum = pgEnum('avatar_shape', [
 ```
 
 **Commands:**
+
 ```bash
 # Run after creating the file
 bun run db:generate
@@ -135,10 +132,9 @@ export const bioPages = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    organizationId: uuid('organization_id').references(
-      () => organizations.id,
-      { onDelete: 'cascade' }
-    ),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
 
     // Basic Information
     title: text('title').notNull(),
@@ -217,6 +213,7 @@ export const bioPages = pgTable(
 ```
 
 **Commands:**
+
 ```bash
 bun run db:generate
 bun run db:migrate
@@ -227,7 +224,16 @@ bun run db:migrate
 **File:** `lib/db/schema/bio-links.ts`
 
 ```typescript
-import { pgTable, uuid, text, boolean, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  boolean,
+  integer,
+  timestamp,
+  jsonb,
+  index,
+} from 'drizzle-orm/pg-core';
 import { bioPages } from './bio-pages';
 
 export const bioLinks = pgTable(
@@ -287,6 +293,7 @@ export const bioLinks = pgTable(
 ```
 
 **Commands:**
+
 ```bash
 bun run db:generate
 bun run db:migrate
@@ -297,7 +304,16 @@ bun run db:migrate
 **File:** `lib/db/schema/theme-presets.ts`
 
 ```typescript
-import { pgTable, uuid, text, boolean, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  boolean,
+  integer,
+  timestamp,
+  jsonb,
+  index,
+} from 'drizzle-orm/pg-core';
 import { user } from './auth';
 import { organizations } from './organization';
 
@@ -308,10 +324,9 @@ export const themePresets = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    organizationId: uuid('organization_id').references(
-      () => organizations.id,
-      { onDelete: 'cascade' }
-    ),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
 
     // Preset Information
     name: text('name').notNull(),
@@ -342,6 +357,7 @@ export const themePresets = pgTable(
 ```
 
 **Commands:**
+
 ```bash
 bun run db:generate
 bun run db:migrate
@@ -352,7 +368,14 @@ bun run db:migrate
 **File:** `lib/db/schema/link-analytics.ts`
 
 ```typescript
-import { pgTable, uuid, text, timestamp, index, sql } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  index,
+  sql,
+} from 'drizzle-orm/pg-core';
 import { bioLinks } from './bio-links';
 import { bioPages } from './bio-pages';
 
@@ -399,7 +422,15 @@ export const linkAnalytics = pgTable(
 **File:** `lib/db/schema/link-analytics-aggregates.ts`
 
 ```typescript
-import { pgTable, uuid, date, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  date,
+  integer,
+  timestamp,
+  jsonb,
+  index,
+} from 'drizzle-orm/pg-core';
 import { bioLinks } from './bio-links';
 import { bioPages } from './bio-pages';
 
@@ -469,6 +500,7 @@ export const linkAnalyticsAggregates = pgTable(
 ```
 
 **Commands:**
+
 ```bash
 bun run db:generate
 bun run db:migrate
@@ -603,21 +635,29 @@ export const bioPageThemeConfigSchema = z.object({
   animation: z.enum(['none', 'fade', 'slide', 'scale']),
   animationDuration: z.string().regex(/^\d+(\.\d+)?s$/),
   backgroundType: z.enum(['solid', 'gradient', 'image']),
-  backgroundGradient: z.object({
-    type: z.enum(['linear', 'radial']),
-    direction: z.string().optional(),
-    colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)).min(2),
-  }).optional(),
-  backgroundImage: z.object({
-    url: z.string().url(),
-    position: z.enum(['cover', 'contain', 'center']),
-    opacity: z.number().min(0).max(1),
-  }).optional(),
+  backgroundGradient: z
+    .object({
+      type: z.enum(['linear', 'radial']),
+      direction: z.string().optional(),
+      colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)).min(2),
+    })
+    .optional(),
+  backgroundImage: z
+    .object({
+      url: z.string().url(),
+      position: z.enum(['cover', 'contain', 'center']),
+      opacity: z.number().min(0).max(1),
+    })
+    .optional(),
 });
 
 export const bioPageSchema = z.object({
   title: z.string().min(1).max(100),
-  slug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(3)
+    .max(50)
+    .regex(/^[a-z0-9-]+$/),
   description: z.string().max(500).optional(),
   avatarUrl: z.string().url().optional(),
   isActive: z.boolean().default(true),
@@ -638,18 +678,39 @@ export const bioPageVisibilitySchema = z.object({
 import { z } from 'zod';
 
 export const bioLinkThemeConfigSchema = z.object({
-  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  borderColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  hoverColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  textColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  borderColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  hoverColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   buttonStyle: z.enum(['solid', 'outline', 'ghost']).optional(),
   borderRadius: z.number().min(0).max(50).optional(),
   borderWidth: z.number().min(0).max(10).optional(),
   shadow: z.enum(['none', 'small', 'medium', 'large']).optional(),
-  fontSize: z.string().regex(/^\d+(px|rem|em)$/).optional(),
+  fontSize: z
+    .string()
+    .regex(/^\d+(px|rem|em)$/)
+    .optional(),
   fontWeight: z.number().min(100).max(900).optional(),
-  padding: z.string().regex(/^\d+(px|rem|em)$/).optional(),
-  margin: z.string().regex(/^\d+(px|rem|em)$/).optional(),
+  padding: z
+    .string()
+    .regex(/^\d+(px|rem|em)$/)
+    .optional(),
+  margin: z
+    .string()
+    .regex(/^\d+(px|rem|em)$/)
+    .optional(),
   iconPosition: z.enum(['left', 'right', 'none']).optional(),
   iconSize: z.enum(['small', 'medium', 'large']).optional(),
   showImage: z.boolean().optional(),
@@ -752,7 +813,12 @@ export function handleApiError(error: unknown) {
   }
 
   return NextResponse.json(
-    { error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' } },
+    {
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'An unexpected error occurred',
+      },
+    },
     { status: 500 }
   );
 }
@@ -1080,7 +1146,8 @@ export async function PATCH(
       .update(bioPages)
       .set({
         isActive,
-        publishedAt: isActive && !existing.publishedAt ? new Date() : existing.publishedAt,
+        publishedAt:
+          isActive && !existing.publishedAt ? new Date() : existing.publishedAt,
         updatedAt: new Date(),
       })
       .where(eq(bioPages.id, params.id))
@@ -1412,7 +1479,9 @@ export async function GET(request: NextRequest) {
     }
 
     if (isSystemPreset !== null) {
-      conditions.push(eq(themePresets.isSystemPreset, isSystemPreset === 'true'));
+      conditions.push(
+        eq(themePresets.isSystemPreset, isSystemPreset === 'true')
+      );
     }
 
     const presets = await db.query.themePresets.findMany({
@@ -1984,10 +2053,22 @@ export const bioPageThemeConfigSchema = z.object({
 });
 
 export const bioLinkThemeConfigSchema = z.object({
-  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  borderColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  hoverColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  textColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  borderColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  hoverColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   buttonStyle: z.enum(['solid', 'outline', 'ghost']).optional(),
   borderRadius: z.number().min(0).max(50).optional(),
   borderWidth: z.number().min(0).max(10).optional(),
@@ -2382,7 +2463,10 @@ export function parseUserAgent(userAgent: string): DeviceInfo {
     browser = 'chrome';
   } else if (/firefox|fxios/i.test(ua)) {
     browser = 'firefox';
-  } else if (/safari/i.test(ua) && !/chrome|crios|crmo|edge|opr|edg/i.test(ua)) {
+  } else if (
+    /safari/i.test(ua) &&
+    !/chrome|crios|crmo|edge|opr|edg/i.test(ua)
+  ) {
     browser = 'safari';
   } else if (/edge|edg|opr/i.test(ua)) {
     browser = 'edge';
@@ -2825,6 +2909,7 @@ vercel --prod
 Use this checklist to track your implementation progress:
 
 ### Phase 1: Database Foundation
+
 - [ ] Create database enums
 - [ ] Create bio_pages table
 - [ ] Create bio_links table
@@ -2836,6 +2921,7 @@ Use this checklist to track your implementation progress:
 - [ ] Run migrations
 
 ### Phase 2: Core API Development
+
 - [ ] Create validation schemas
 - [ ] Create API middleware
 - [ ] Create Bio Pages API routes
@@ -2844,6 +2930,7 @@ Use this checklist to track your implementation progress:
 - [ ] Create Analytics API routes
 
 ### Phase 3: Theme System
+
 - [ ] Create theme types
 - [ ] Create theme CSS generator
 - [ ] Create theme provider
@@ -2851,6 +2938,7 @@ Use this checklist to track your implementation progress:
 - [ ] Create theme validator
 
 ### Phase 4: Frontend Components
+
 - [ ] Create custom hooks
 - [ ] Create dashboard layout
 - [ ] Create bio pages components
@@ -2858,16 +2946,19 @@ Use this checklist to track your implementation progress:
 - [ ] Create shared components
 
 ### Phase 5: Live Preview
+
 - [ ] Create live preview component
 - [ ] Create device selector
 - [ ] Create preview controls
 
 ### Phase 6: Analytics Tracking
+
 - [ ] Create analytics utilities
 - [ ] Create client-side tracker
 - [ ] Create analytics API endpoint
 
 ### Phase 7: Pages & Routing
+
 - [ ] Create dashboard group structure
 - [ ] Create dashboard layout
 - [ ] Create dashboard home
@@ -2875,18 +2966,21 @@ Use this checklist to track your implementation progress:
 - [ ] Create public bio page view
 
 ### Phase 8: Testing
+
 - [ ] Create unit tests
 - [ ] Create integration tests
 - [ ] Create E2E tests
 - [ ] Run all tests
 
 ### Phase 9: Performance & Optimization
+
 - [ ] Add code splitting
 - [ ] Implement caching
 - [ ] Optimize images
 - [ ] Add lazy loading
 
 ### Phase 10: Deployment & Launch
+
 - [ ] Set up production environment
 - [ ] Run production build
 - [ ] Deploy to production

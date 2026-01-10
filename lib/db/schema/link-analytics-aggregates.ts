@@ -1,4 +1,12 @@
-import { pgTable, uuid, date, integer, timestamp, jsonb, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  date,
+  integer,
+  timestamp,
+  jsonb,
+  index,
+} from 'drizzle-orm/pg-core';
 import { bioLinks } from './bio-links';
 import { bioPages } from './bio-pages';
 

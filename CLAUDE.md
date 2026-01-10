@@ -11,6 +11,7 @@ This is a **SaaS Starter Kit** being evolved into a **Bio-Link Management System
 ## Key Commands
 
 ### Development
+
 ```bash
 bun run dev          # Start dev server
 bun run build        # Build for production
@@ -19,13 +20,16 @@ bun run analyze      # Bundle size analysis
 ```
 
 ### Database - Dual Workflow
+
 **Local Development (Quick):**
+
 ```bash
 bun run db:push      # Push schema directly (no migrations)
 bun run db:studio    # Open Drizzle Studio
 ```
 
 **Production (Migration-based):**
+
 ```bash
 bun run db:generate  # Generate migration files
 bun run db:migrate   # Run migrations
@@ -33,10 +37,12 @@ bun run db:migrate:prod  # Run to production
 ```
 
 The database driver switches automatically based on `DATABASE_TYPE` env var:
+
 - `local` → uses `postgres` package (postgres-js)
 - `neon` → uses `@neondatabase/serverless`
 
 ### Testing & Quality
+
 ```bash
 bun run test         # Unit tests (Jest)
 bun run test:watch   # Watch mode
@@ -47,6 +53,7 @@ bun run type-check   # TypeScript checks
 ```
 
 ### Test Database Connection
+
 ```bash
 bun run db-scripts/test-db-connection.js
 ```
@@ -54,19 +61,25 @@ bun run db-scripts/test-db-connection.js
 ## Architecture
 
 ### Multi-Tenant SaaS Foundation
+
 The starter kit provides:
+
 - **Organizations** as tenants with role-based permissions (Owner/Admin/Member/Viewer)
 - **Better-Auth** for authentication (email/password + OAuth)
 - **Stripe** integration for subscriptions
 - **Activity logging** for audit trails
 
 ### Database Driver Switching
+
 The database connection in `lib/db/index.ts` automatically switches drivers based on `DATABASE_TYPE`:
+
 - Local development uses connection pooling via `postgres-js`
 - Production uses Neon's serverless HTTP driver
 
 ### Planned Bio-Link System
+
 See `plans/` directory for comprehensive design documents. Key features:
+
 - Multiple bio pages per user (not just one)
 - Advanced theme system with JSONB storage
 - Individual link styling
@@ -93,6 +106,7 @@ plans/                  # Comprehensive project documentation
 ## Current Schema Tables
 
 Existing SaaS starter tables (see `lib/db/schema/`):
+
 - `user`, `session`, `account`, `verification` (Better-Auth)
 - `organizations`, `organization_members` (multi-tenancy)
 - `subscriptions` (Stripe billing)
@@ -102,23 +116,28 @@ Existing SaaS starter tables (see `lib/db/schema/`):
 ## Important Patterns
 
 ### Theme Configuration
+
 Themes use JSONB fields for flexible storage. The theme system is hierarchical:
+
 1. Page-level theme (`bio_pages.theme_config`)
 2. Link-level override (`bio_links.theme_config`)
 3. CSS variable-based application
 
 ### Analytics Architecture
+
 - Raw click events stored in `link_analytics`
 - Pre-computed aggregations in `link_analytics_aggregates`
 - Date-based indexes for efficient time-series queries
 
 ### Git Hooks
+
 - **pre-commit:** Runs Prettier, ESLint, and tests (if test files exist)
 - **pre-push:** Currently configured to ignore (see `.husky/pre-push`)
 
 ## Implementation Order
 
 Follow the 18-week implementation plan in `plans/implementation-plan.md`:
+
 1. Phase 1-2: Database and Core API
 2. Phase 3: Theme System
 3. Phase 4: Frontend Components
