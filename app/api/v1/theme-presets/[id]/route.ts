@@ -19,8 +19,14 @@ export async function GET(
 
     const preset = await db.query.themePresets.findFirst({
       where: or(
-        and(eq(themePresets.id, params.id), eq(themePresets.userId, session.user.id)),
-        and(eq(themePresets.id, params.id), eq(themePresets.isSystemPreset, true))
+        and(
+          eq(themePresets.id, params.id),
+          eq(themePresets.userId, session.user.id)
+        ),
+        and(
+          eq(themePresets.id, params.id),
+          eq(themePresets.isSystemPreset, true)
+        )
       ),
     });
 
