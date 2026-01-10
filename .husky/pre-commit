@@ -6,7 +6,7 @@ bun prettier --write .
 # Run ESLint
 bun lint --fix
 
-# Run tests only if test files exist
-if [ -d "tests" ] || [ -d "__tests__" ] || [ -n "$(find . -maxdepth 3 -type f \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.test.js' -o -name '*.test.jsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' -o -name '*.spec.js' -o -name '*.spec.jsx' \) 2>/dev/null)" ]; then
+# Run tests (only if test files exist)
+if [ -n "$(find . -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' 2>/dev/null)" ]; then
   bun test
 fi

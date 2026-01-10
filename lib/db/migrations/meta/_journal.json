@@ -15,6 +15,13 @@
       "when": 1766816247489,
       "tag": "0001_secret_war_machine",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768008520654,
+      "tag": "0002_bizarre_ultimo",
+      "breakpoints": true
     }
   ]
 }
