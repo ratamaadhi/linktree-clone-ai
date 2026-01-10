@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { themePresets } from '@/lib/db/schema';
 import { requireAuth, handleApiError } from '@/lib/api/middleware';
 import { themePresetSchema } from '@/lib/validations/theme-preset';
-import { eq, desc, or } from 'drizzle-orm';
+import { eq, desc, or, and } from 'drizzle-orm';
 
 // GET /api/v1/theme-presets - List theme presets
 export async function GET(request: NextRequest) {
@@ -39,10 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     const presets = await db.query.themePresets.findMany({
-      where: or(
-        eq(themePresets.userId, session.user.id),
-        eq(themePresets.isSystemPreset, true)
-      ),
+      where: and(...conditions),
       orderBy: [desc(themePresets.createdAt)],
       limit,
       offset,

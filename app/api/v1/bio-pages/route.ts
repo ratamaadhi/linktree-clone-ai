@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { bioPages } from '@/lib/db/schema';
 import { requireAuth, handleApiError } from '@/lib/api/middleware';
 import { bioPageSchema } from '@/lib/validations/bio-page';
-import { eq, desc, sql } from 'drizzle-orm';
+import { eq, desc, sql, and } from 'drizzle-orm';
 
 // GET /api/v1/bio-pages - List all bio pages
 export async function GET(request: NextRequest) {
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     }
 
     const pages = await db.query.bioPages.findMany({
-      where: eq(bioPages.userId, session.user.id),
+      where: and(...conditions),
       orderBy: [desc(bioPages.createdAt)],
       limit,
       offset,
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     const [{ count: total }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(bioPages)
-      .where(eq(bioPages.userId, session.user.id));
+      .where(and(...conditions));
 
     return NextResponse.json({
       data: pages,

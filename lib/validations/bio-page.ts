@@ -55,6 +55,7 @@ export const bioPageSchema = z.object({
   title: z.string().min(1).max(100),
   slug: z
     .string()
+    .trim()
     .min(3)
     .max(50)
     .regex(/^[a-z0-9-]+$/),

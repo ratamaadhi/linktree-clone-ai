@@ -5,3 +5,8 @@ bun prettier --write .
 
 # Run ESLint
 bun lint --fix
+
+# Run tests (only if test files exist)
+if [ -n "$(find . -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' 2>/dev/null)" ]; then
+  bun test
+fi

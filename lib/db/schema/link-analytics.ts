@@ -2,6 +2,7 @@ import { pgTable, uuid, text, timestamp, index } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { bioLinks } from './bio-links';
 import { bioPages } from './bio-pages';
+import { deviceTypeEnum } from './enums';
 
 export const linkAnalytics = pgTable(
   'link_analytics',
@@ -23,7 +24,7 @@ export const linkAnalytics = pgTable(
     referrer: text('referrer'),
     country: text('country'),
     city: text('city'),
-    deviceType: text('device_type'),
+    deviceType: deviceTypeEnum('device_type'),
     browser: text('browser'),
 
     // Custom Parameters (for tracking campaigns, etc.)

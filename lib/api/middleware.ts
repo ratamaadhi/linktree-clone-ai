@@ -32,12 +32,18 @@ export function handleApiError(error: unknown) {
   console.error('API Error:', error);
 
   if (error && typeof error === 'object' && 'errors' in error) {
+    const zodError = error as {
+      errors: Array<{ path: string[]; message: string }>;
+    };
     return NextResponse.json(
       {
         error: {
           code: 'VALIDATION_ERROR',
           message: 'Invalid input data',
-          details: error,
+          details: zodError.errors.map((e) => ({
+            path: e.path.join('.'),
+            message: e.message,
+          })),
         },
       },
       { status: 400 }
