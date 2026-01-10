@@ -197,13 +197,7 @@ export function getDefaultTheme(): BioPageThemeConfig {
 }
 
 export function getThemeByName(name: string): BioPageThemeConfig | undefined {
-  const themeNames = [
-    'default',
-    'dark',
-    'pink',
-    'green',
-    'amber-grid',
-  ];
+  const themeNames = ['default', 'dark', 'pink', 'green', 'amber-grid'];
 
   const index = themeNames.indexOf(name);
   return index !== -1 ? defaultThemes[index] : undefined;

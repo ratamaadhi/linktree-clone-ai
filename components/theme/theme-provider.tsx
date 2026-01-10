@@ -30,7 +30,10 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
         typeof targetValue === 'object' &&
         !Array.isArray(targetValue)
       ) {
-        result[key as keyof T] = deepMerge(targetValue, sourceValue) as T[keyof T];
+        result[key as keyof T] = deepMerge(
+          targetValue,
+          sourceValue
+        ) as T[keyof T];
       } else {
         result[key as keyof T] = sourceValue as T[keyof T];
       }
@@ -68,9 +71,7 @@ export function ThemeProvider({
   );
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
