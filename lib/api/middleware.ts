@@ -16,7 +16,7 @@ export async function requireAuth(request: NextRequest) {
   return session;
 }
 
-export async function requireOrgAccess(request: NextRequest, _orgId: string) {
+export async function requireOrgAccess(request: NextRequest) {
   const session = await requireAuth(request);
 
   if (session instanceof NextResponse) {

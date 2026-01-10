@@ -8,7 +8,7 @@ import { eq, and, asc } from 'drizzle-orm';
 // GET /api/v1/bio-pages/:pageId/links - List links
 export async function GET(
   request: NextRequest,
-  { params }: { params: { pageId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -17,12 +17,10 @@ export async function GET(
       return session;
     }
 
+    const { id } = await params;
     // Verify bio page ownership
     const bioPage = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.pageId),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!bioPage) {
@@ -40,14 +38,14 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const isActive = searchParams.get('isActive');
 
-    const conditions = [eq(bioLinks.bioPageId, params.pageId)];
+    const conditions = [eq(bioLinks.bioPageId, id)];
 
     if (isActive !== null) {
       conditions.push(eq(bioLinks.isActive, isActive === 'true'));
     }
 
     const links = await db.query.bioLinks.findMany({
-      where: eq(bioLinks.bioPageId, params.pageId),
+      where: eq(bioLinks.bioPageId, id),
       orderBy: [asc(bioLinks.order)],
     });
 
@@ -60,7 +58,7 @@ export async function GET(
 // POST /api/v1/bio-pages/:pageId/links - Create link
 export async function POST(
   request: NextRequest,
-  { params }: { params: { pageId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -69,12 +67,10 @@ export async function POST(
       return session;
     }
 
+    const { id } = await params;
     // Verify bio page ownership
     const bioPage = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.pageId),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!bioPage) {
@@ -96,7 +92,7 @@ export async function POST(
       .insert(bioLinks)
       .values({
         ...data,
-        bioPageId: params.pageId,
+        bioPageId: id,
       })
       .returning();
 

@@ -8,7 +8,7 @@ import { eq, and, or } from 'drizzle-orm';
 // GET /api/v1/theme-presets/:id - Get single theme preset
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -17,16 +17,11 @@ export async function GET(
       return session;
     }
 
+    const { id } = await params;
     const preset = await db.query.themePresets.findFirst({
       where: or(
-        and(
-          eq(themePresets.id, params.id),
-          eq(themePresets.userId, session.user.id)
-        ),
-        and(
-          eq(themePresets.id, params.id),
-          eq(themePresets.isSystemPreset, true)
-        )
+        and(eq(themePresets.id, id), eq(themePresets.userId, session.user.id)),
+        and(eq(themePresets.id, id), eq(themePresets.isSystemPreset, true))
       ),
     });
 
@@ -51,7 +46,7 @@ export async function GET(
 // PUT /api/v1/theme-presets/:id - Update theme preset
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -60,10 +55,11 @@ export async function PUT(
       return session;
     }
 
+    const { id } = await params;
     // Verify ownership (can't update system presets)
     const existing = await db.query.themePresets.findFirst({
       where: and(
-        eq(themePresets.id, params.id),
+        eq(themePresets.id, id),
         eq(themePresets.userId, session.user.id)
       ),
     });
@@ -101,7 +97,7 @@ export async function PUT(
         ...data,
         updatedAt: new Date(),
       })
-      .where(eq(themePresets.id, params.id))
+      .where(eq(themePresets.id, id))
       .returning();
 
     return NextResponse.json({ data: preset });
@@ -113,7 +109,7 @@ export async function PUT(
 // DELETE /api/v1/theme-presets/:id - Delete theme preset
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -122,10 +118,11 @@ export async function DELETE(
       return session;
     }
 
+    const { id } = await params;
     // Verify ownership (can't delete system presets)
     const existing = await db.query.themePresets.findFirst({
       where: and(
-        eq(themePresets.id, params.id),
+        eq(themePresets.id, id),
         eq(themePresets.userId, session.user.id)
       ),
     });
@@ -154,7 +151,7 @@ export async function DELETE(
       );
     }
 
-    await db.delete(themePresets).where(eq(themePresets.id, params.id));
+    await db.delete(themePresets).where(eq(themePresets.id, id));
 
     return NextResponse.json({ message: 'Theme preset deleted successfully' });
   } catch (error) {

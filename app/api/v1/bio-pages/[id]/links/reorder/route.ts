@@ -7,7 +7,7 @@ import { eq, and } from 'drizzle-orm';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { pageId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -16,12 +16,10 @@ export async function POST(
       return session;
     }
 
+    const { id } = await params;
     // Verify bio page ownership
     const bioPage = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.pageId),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!bioPage) {

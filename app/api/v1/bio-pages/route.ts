@@ -48,8 +48,8 @@ export async function GET(request: NextRequest) {
       pagination: {
         page,
         limit,
-        total: total[0].count,
-        totalPages: Math.ceil(total[0].count / limit),
+        total,
+        totalPages: Math.ceil(total / limit),
       },
     });
   } catch (error) {

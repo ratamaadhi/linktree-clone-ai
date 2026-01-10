@@ -7,7 +7,7 @@ import { eq, and } from 'drizzle-orm';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -16,15 +16,13 @@ export async function PATCH(
       return session;
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { isActive } = bioPageVisibilitySchema.parse(body);
 
     // Verify ownership
     const existing = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.id),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!existing) {
@@ -47,7 +45,7 @@ export async function PATCH(
           isActive && !existing.publishedAt ? new Date() : existing.publishedAt,
         updatedAt: new Date(),
       })
-      .where(eq(bioPages.id, params.id))
+      .where(eq(bioPages.id, id))
       .returning();
 
     return NextResponse.json({ data: page });

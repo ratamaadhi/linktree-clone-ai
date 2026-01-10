@@ -8,7 +8,7 @@ import { eq, and } from 'drizzle-orm';
 // GET /api/v1/bio-pages/:id - Get single bio page
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -17,11 +17,9 @@ export async function GET(
       return session;
     }
 
+    const { id } = await params;
     const page = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.id),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
       with: {
         links: true,
       },
@@ -48,7 +46,7 @@ export async function GET(
 // PUT /api/v1/bio-pages/:id - Update bio page
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -57,15 +55,13 @@ export async function PUT(
       return session;
     }
 
+    const { id } = await params;
     const body = await request.json();
     const data = bioPageUpdateSchema.parse(body);
 
     // Verify ownership
     const existing = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.id),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!existing) {
@@ -109,7 +105,7 @@ export async function PUT(
             ? new Date()
             : existing.publishedAt,
       })
-      .where(eq(bioPages.id, params.id))
+      .where(eq(bioPages.id, id))
       .returning();
 
     return NextResponse.json({ data: page });
@@ -121,7 +117,7 @@ export async function PUT(
 // DELETE /api/v1/bio-pages/:id - Delete bio page
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth(request);
@@ -130,12 +126,10 @@ export async function DELETE(
       return session;
     }
 
+    const { id } = await params;
     // Verify ownership
     const existing = await db.query.bioPages.findFirst({
-      where: and(
-        eq(bioPages.id, params.id),
-        eq(bioPages.userId, session.user.id)
-      ),
+      where: and(eq(bioPages.id, id), eq(bioPages.userId, session.user.id)),
     });
 
     if (!existing) {
@@ -150,7 +144,7 @@ export async function DELETE(
       );
     }
 
-    await db.delete(bioPages).where(eq(bioPages.id, params.id));
+    await db.delete(bioPages).where(eq(bioPages.id, id));
 
     return NextResponse.json({ message: 'Bio page deleted successfully' });
   } catch (error) {
