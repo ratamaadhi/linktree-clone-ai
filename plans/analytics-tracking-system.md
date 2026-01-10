@@ -158,18 +158,26 @@ export const linkAnalyticsAggregates = pgTable(
     otherBrowserClicks: integer('other_browser_clicks').default(0).notNull(),
 
     // Top Referrers (JSON array)
-    topReferrers: jsonb('top_referrers').$type<Array<{
-      referrer: string;
-      count: number;
-    }>>(),
+    topReferrers: jsonb('top_referrers').$type<
+      Array<{
+        referrer: string;
+        count: number;
+      }>
+    >(),
 
     // Geographic Distribution (JSON object)
     topCountries: jsonb('top_countries').$type<Record<string, number>>(),
 
     // UTM Campaign Data
-    utmSourceBreakdown: jsonb('utm_source_breakdown').$type<Record<string, number>>(),
-    utmMediumBreakdown: jsonb('utm_medium_breakdown').$type<Record<string, number>>(),
-    utmCampaignBreakdown: jsonb('utm_campaign_breakdown').$type<Record<string, number>>(),
+    utmSourceBreakdown: jsonb('utm_source_breakdown').$type<
+      Record<string, number>
+    >(),
+    utmMediumBreakdown: jsonb('utm_medium_breakdown').$type<
+      Record<string, number>
+    >(),
+    utmCampaignBreakdown: jsonb('utm_campaign_breakdown').$type<
+      Record<string, number>
+    >(),
 
     // Updated At
     updatedAt: timestamp('updated_at')
@@ -198,11 +206,13 @@ export class LinkTracker {
   private clickQueue: ClickEvent[];
   private flushInterval: number;
 
-  constructor(config: {
-    trackingEndpoint?: string;
-    batchSize?: number;
-    flushInterval?: number;
-  } = {}) {
+  constructor(
+    config: {
+      trackingEndpoint?: string;
+      batchSize?: number;
+      flushInterval?: number;
+    } = {}
+  ) {
     this.trackingEndpoint = config.trackingEndpoint || '/api/v1/track-click';
     this.batchSize = config.batchSize || 10;
     this.flushInterval = config.flushInterval || 5000; // 5 seconds
@@ -411,7 +421,7 @@ export async function POST(request: NextRequest) {
     await db.insert(linkAnalytics).values(clickRecords);
 
     // Trigger aggregation job (can be async)
-    triggerAggregationJob(clicks.map(c => c.bioPageId));
+    triggerAggregationJob(clicks.map((c) => c.bioPageId));
 
     return NextResponse.json({
       message: 'Clicks tracked successfully',
@@ -484,7 +494,10 @@ export function parseUserAgent(userAgent: string): DeviceInfo {
     browser = 'chrome';
   } else if (/firefox|fxios/i.test(ua)) {
     browser = 'firefox';
-  } else if (/safari/i.test(ua) && !/chrome|crios|crmo|edge|opr|edg/i.test(ua)) {
+  } else if (
+    /safari/i.test(ua) &&
+    !/chrome|crios|crmo|edge|opr|edg/i.test(ua)
+  ) {
     browser = 'safari';
   } else if (/edge|edg|opr/i.test(ua)) {
     browser = 'edge';
@@ -522,9 +535,15 @@ interface GeoInfo {
   longitude: number;
 }
 
-export async function getGeolocation(ipAddress: string): Promise<GeoInfo | null> {
+export async function getGeolocation(
+  ipAddress: string
+): Promise<GeoInfo | null> {
   // Skip for localhost or unknown IPs
-  if (ipAddress === 'unknown' || ipAddress === '127.0.0.1' || ipAddress === '::1') {
+  if (
+    ipAddress === 'unknown' ||
+    ipAddress === '127.0.0.1' ||
+    ipAddress === '::1'
+  ) {
     return null;
   }
 
@@ -613,26 +632,26 @@ async function aggregateClicksForLink(
   bioLinkId: string,
   bioPageId: string,
   date: Date,
-  clicks: typeof linkAnalytics.$inferSelect[]
+  clicks: (typeof linkAnalytics.$inferSelect)[]
 ) {
   // Calculate metrics
   const totalClicks = clicks.length;
-  const uniqueClicks = new Set(clicks.map(c => c.ipAddress)).size;
+  const uniqueClicks = new Set(clicks.map((c) => c.ipAddress)).size;
 
   // Device breakdown
   const deviceBreakdown = {
-    desktop: clicks.filter(c => c.deviceType === 'desktop').length,
-    mobile: clicks.filter(c => c.deviceType === 'mobile').length,
-    tablet: clicks.filter(c => c.deviceType === 'tablet').length,
+    desktop: clicks.filter((c) => c.deviceType === 'desktop').length,
+    mobile: clicks.filter((c) => c.deviceType === 'mobile').length,
+    tablet: clicks.filter((c) => c.deviceType === 'tablet').length,
   };
 
   // Browser breakdown
   const browserBreakdown = {
-    chrome: clicks.filter(c => c.browser === 'chrome').length,
-    firefox: clicks.filter(c => c.browser === 'firefox').length,
-    safari: clicks.filter(c => c.browser === 'safari').length,
-    edge: clicks.filter(c => c.browser === 'edge').length,
-    other: clicks.filter(c => c.browser === 'other').length,
+    chrome: clicks.filter((c) => c.browser === 'chrome').length,
+    firefox: clicks.filter((c) => c.browser === 'firefox').length,
+    safari: clicks.filter((c) => c.browser === 'safari').length,
+    edge: clicks.filter((c) => c.browser === 'edge').length,
+    other: clicks.filter((c) => c.browser === 'other').length,
   };
 
   // Top referrers
@@ -652,7 +671,10 @@ async function aggregateClicksForLink(
   const countryCounts = new Map<string, number>();
   for (const click of clicks) {
     if (click.country) {
-      countryCounts.set(click.country, (countryCounts.get(click.country) || 0) + 1);
+      countryCounts.set(
+        click.country,
+        (countryCounts.get(click.country) || 0) + 1
+      );
     }
   }
   const topCountries = Object.fromEntries(
@@ -676,7 +698,8 @@ async function aggregateClicksForLink(
 
   if (existing) {
     // Update existing record
-    await db.update(linkAnalyticsAggregates)
+    await db
+      .update(linkAnalyticsAggregates)
       .set({
         totalClicks: existing.totalClicks + totalClicks,
         uniqueClicks: existing.uniqueClicks + uniqueClicks,
@@ -687,7 +710,8 @@ async function aggregateClicksForLink(
         firefoxClicks: existing.firefoxClicks + browserBreakdown.firefox,
         safariClicks: existing.safariClicks + browserBreakdown.safari,
         edgeClicks: existing.edgeClicks + browserBreakdown.edge,
-        otherBrowserClicks: existing.otherBrowserClicks + browserBreakdown.other,
+        otherBrowserClicks:
+          existing.otherBrowserClicks + browserBreakdown.other,
         topReferrers,
         topCountries,
         utmSourceBreakdown,
@@ -722,7 +746,7 @@ async function aggregateClicksForLink(
 }
 
 function aggregateUTM(
-  clicks: typeof linkAnalytics.$inferSelect[],
+  clicks: (typeof linkAnalytics.$inferSelect)[],
   field: 'utmSource' | 'utmMedium' | 'utmCampaign'
 ): Record<string, number> {
   const counts = new Map<string, number>();
@@ -880,7 +904,10 @@ export async function GET(
     for (const agg of aggregates) {
       if (agg.topReferrers) {
         for (const { referrer, count } of agg.topReferrers) {
-          referrerCounts.set(referrer, (referrerCounts.get(referrer) || 0) + count);
+          referrerCounts.set(
+            referrer,
+            (referrerCounts.get(referrer) || 0) + count
+          );
         }
       }
     }
@@ -913,7 +940,7 @@ export async function GET(
 }
 
 function buildTimeline(
-  aggregates: typeof linkAnalyticsAggregates.$inferSelect[],
+  aggregates: (typeof linkAnalyticsAggregates.$inferSelect)[],
   groupBy: string
 ) {
   // Group aggregates by date period

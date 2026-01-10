@@ -21,42 +21,42 @@ The theme system uses a hierarchical configuration model with three levels:
 ```typescript
 export interface BioPageThemeConfig {
   // Colors
-  primaryColor: string;           // Primary accent color (hex)
-  secondaryColor: string;         // Secondary accent color (hex)
-  backgroundColor: string;        // Page background color (hex)
-  textColor: string;              // Main text color (hex)
-  secondaryTextColor: string;     // Secondary text color (hex)
+  primaryColor: string; // Primary accent color (hex)
+  secondaryColor: string; // Secondary accent color (hex)
+  backgroundColor: string; // Page background color (hex)
+  textColor: string; // Main text color (hex)
+  secondaryTextColor: string; // Secondary text color (hex)
 
   // Typography
-  fontFamily: string;             // Font family name
+  fontFamily: string; // Font family name
   fontSize: {
-    base: string;                 // Base font size (e.g., '16px')
-    heading: string;              // Heading font size (e.g., '24px')
-    small: string;               // Small text size (e.g., '14px')
+    base: string; // Base font size (e.g., '16px')
+    heading: string; // Heading font size (e.g., '24px')
+    small: string; // Small text size (e.g., '14px')
   };
   fontWeight: {
-    normal: number;               // Normal font weight (400)
-    medium: number;               // Medium font weight (500)
-    bold: number;                 // Bold font weight (700)
+    normal: number; // Normal font weight (400)
+    medium: number; // Medium font weight (500)
+    bold: number; // Bold font weight (700)
   };
 
   // Spacing
   spacing: 'compact' | 'normal' | 'relaxed';
   padding: {
-    page: string;                 // Page padding (e.g., '24px')
-    section: string;              // Section padding (e.g., '16px')
-    link: string;                 // Link padding (e.g., '12px')
+    page: string; // Page padding (e.g., '24px')
+    section: string; // Section padding (e.g., '16px')
+    link: string; // Link padding (e.g., '12px')
   };
 
   // Layout
   layout: 'vertical' | 'grid';
-  maxWidth: string;               // Maximum container width (e.g., '600px')
+  maxWidth: string; // Maximum container width (e.g., '600px')
   alignment: 'left' | 'center' | 'right';
 
   // Button/Link Styling
   buttonStyle: 'solid' | 'outline' | 'ghost';
-  borderRadius: number;           // Border radius in pixels (0-50)
-  borderWidth: number;            // Border width in pixels
+  borderRadius: number; // Border radius in pixels (0-50)
+  borderWidth: number; // Border width in pixels
   shadow: 'none' | 'small' | 'medium' | 'large';
 
   // Avatar
@@ -65,19 +65,19 @@ export interface BioPageThemeConfig {
 
   // Animations
   animation: 'none' | 'fade' | 'slide' | 'scale';
-  animationDuration: string;       // Animation duration (e.g., '0.3s')
+  animationDuration: string; // Animation duration (e.g., '0.3s')
 
   // Background
   backgroundType: 'solid' | 'gradient' | 'image';
   backgroundGradient?: {
     type: 'linear' | 'radial';
-    direction?: string;           // For linear gradient (e.g., '45deg')
-    colors: string[];             // Array of hex colors
+    direction?: string; // For linear gradient (e.g., '45deg')
+    colors: string[]; // Array of hex colors
   };
   backgroundImage?: {
     url: string;
     position: 'cover' | 'contain' | 'center';
-    opacity: number;              // 0-1
+    opacity: number; // 0-1
   };
 }
 ```
@@ -87,24 +87,24 @@ export interface BioPageThemeConfig {
 ```typescript
 export interface BioLinkThemeConfig {
   // Colors (overrides page theme)
-  backgroundColor?: string;        // Link background color (hex)
-  textColor?: string;             // Link text color (hex)
-  borderColor?: string;           // Link border color (hex)
-  hoverColor?: string;            // Hover state color (hex)
+  backgroundColor?: string; // Link background color (hex)
+  textColor?: string; // Link text color (hex)
+  borderColor?: string; // Link border color (hex)
+  hoverColor?: string; // Hover state color (hex)
 
   // Button Styling
   buttonStyle?: 'solid' | 'outline' | 'ghost';
-  borderRadius?: number;          // Border radius in pixels (0-50)
-  borderWidth?: number;           // Border width in pixels
+  borderRadius?: number; // Border radius in pixels (0-50)
+  borderWidth?: number; // Border width in pixels
   shadow?: 'none' | 'small' | 'medium' | 'large';
 
   // Typography
-  fontSize?: string;              // Font size (e.g., '16px')
-  fontWeight?: number;             // Font weight (400-700)
+  fontSize?: string; // Font size (e.g., '16px')
+  fontWeight?: number; // Font weight (400-700)
 
   // Spacing
-  padding?: string;                // Link padding (e.g., '12px')
-  margin?: string;                // Link margin (e.g., '8px')
+  padding?: string; // Link padding (e.g., '12px')
+  margin?: string; // Link margin (e.g., '8px')
 
   // Icon
   iconPosition?: 'left' | 'right' | 'none';
@@ -169,7 +169,9 @@ interface ThemeContextValue {
   resetTheme: () => void;
 }
 
-export const ThemeContext = React.createContext<ThemeContextValue | undefined>(undefined);
+export const ThemeContext = React.createContext<ThemeContextValue | undefined>(
+  undefined
+);
 
 export function useTheme() {
   const context = React.useContext(ThemeContext);
@@ -204,7 +206,8 @@ export class ThemePresetManager {
       organizationId?: string;
     }
   ) {
-    const [preset] = await db.insert(themePresets)
+    const [preset] = await db
+      .insert(themePresets)
       .values({
         userId,
         organizationId: data.organizationId,
@@ -232,7 +235,8 @@ export class ThemePresetManager {
       throw new Error('Preset not found');
     }
 
-    const [duplicate] = await db.insert(themePresets)
+    const [duplicate] = await db
+      .insert(themePresets)
       .values({
         userId,
         organizationId: original.organizationId,
@@ -260,7 +264,8 @@ export class ThemePresetManager {
       throw new Error('Preset not found');
     }
 
-    await db.update(bioPages)
+    await db
+      .update(bioPages)
       .set({
         themeConfig: preset.themeConfig,
         themePresetId: presetId,
@@ -268,7 +273,8 @@ export class ThemePresetManager {
       .where(eq(bioPages.id, bioPageId));
 
     // Increment usage count
-    await db.update(themePresets)
+    await db
+      .update(themePresets)
       .set({
         usageCount: sql`${themePresets.usageCount} + 1`,
       })
@@ -347,23 +353,39 @@ export const bioPageThemeConfigSchema = z.object({
   animation: z.enum(['none', 'fade', 'slide', 'scale']),
   animationDuration: z.string(),
   backgroundType: z.enum(['solid', 'gradient', 'image']),
-  backgroundGradient: z.object({
-    type: z.enum(['linear', 'radial']),
-    direction: z.string().optional(),
-    colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)),
-  }).optional(),
-  backgroundImage: z.object({
-    url: z.string().url(),
-    position: z.enum(['cover', 'contain', 'center']),
-    opacity: z.number().min(0).max(1),
-  }).optional(),
+  backgroundGradient: z
+    .object({
+      type: z.enum(['linear', 'radial']),
+      direction: z.string().optional(),
+      colors: z.array(z.string().regex(/^#[0-9A-Fa-f]{6}$/)),
+    })
+    .optional(),
+  backgroundImage: z
+    .object({
+      url: z.string().url(),
+      position: z.enum(['cover', 'contain', 'center']),
+      opacity: z.number().min(0).max(1),
+    })
+    .optional(),
 });
 
 export const bioLinkThemeConfigSchema = z.object({
-  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  borderColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
-  hoverColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  textColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  borderColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
+  hoverColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .optional(),
   buttonStyle: z.enum(['solid', 'outline', 'ghost']).optional(),
   borderRadius: z.number().min(0).max(50).optional(),
   borderWidth: z.number().min(0).max(10).optional(),
@@ -530,7 +552,9 @@ function getShadowValue(shadow: 'none' | 'small' | 'medium' | 'large'): string {
   }
 }
 
-function getAnimationCSS(animation: 'none' | 'fade' | 'slide' | 'scale'): string {
+function getAnimationCSS(
+  animation: 'none' | 'fade' | 'slide' | 'scale'
+): string {
   switch (animation) {
     case 'fade':
       return `

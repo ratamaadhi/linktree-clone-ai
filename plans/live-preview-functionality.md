@@ -672,8 +672,11 @@ Memoize expensive computations and prevent unnecessary re-renders.
 const themeCSS = React.useMemo(() => generateThemeCSS(theme), [theme]);
 
 // Memoize active links
-const activeLinks = React.useMemo(() =>
-  bioPage.links.filter(link => link.isActive).sort((a, b) => a.order - b.order),
+const activeLinks = React.useMemo(
+  () =>
+    bioPage.links
+      .filter((link) => link.isActive)
+      .sort((a, b) => a.order - b.order),
   [bioPage.links]
 );
 
@@ -836,7 +839,10 @@ Preview takes up entire screen.
 ### Generate Shareable Preview URL
 
 ```typescript
-function generatePreviewUrl(bioPageSlug: string, themeConfig: BioPageThemeConfig) {
+function generatePreviewUrl(
+  bioPageSlug: string,
+  themeConfig: BioPageThemeConfig
+) {
   const baseUrl = `${window.location.origin}/p/${bioPageSlug}`;
   const params = new URLSearchParams();
 
@@ -890,9 +896,15 @@ Ensure all theme properties are applied correctly.
 function validateThemeApplied(theme: BioPageThemeConfig, preview: HTMLElement) {
   const computedStyle = window.getComputedStyle(preview);
 
-  expect(computedStyle.getPropertyValue('--theme-primary')).toBe(theme.primaryColor);
-  expect(computedStyle.getPropertyValue('--theme-background')).toBe(theme.backgroundColor);
-  expect(computedStyle.getPropertyValue('--theme-font-family')).toBe(theme.fontFamily);
+  expect(computedStyle.getPropertyValue('--theme-primary')).toBe(
+    theme.primaryColor
+  );
+  expect(computedStyle.getPropertyValue('--theme-background')).toBe(
+    theme.backgroundColor
+  );
+  expect(computedStyle.getPropertyValue('--theme-font-family')).toBe(
+    theme.fontFamily
+  );
 }
 ```
 

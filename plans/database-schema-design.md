@@ -18,7 +18,9 @@ export const bioPages = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
 
     // Basic Information
     title: text('title').notNull(),
@@ -121,7 +123,9 @@ export const themePresets = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }),
+    organizationId: uuid('organization_id').references(() => organizations.id, {
+      onDelete: 'cascade',
+    }),
 
     // Preset Information
     name: text('name').notNull(),
@@ -232,10 +236,12 @@ export const linkAnalyticsAggregates = pgTable(
     tabletClicks: integer('tablet_clicks').default(0).notNull(),
 
     // Top Referrers (JSON array)
-    topReferrers: jsonb('top_referrers').$type<Array<{
-      referrer: string;
-      count: number;
-    }>>(),
+    topReferrers: jsonb('top_referrers').$type<
+      Array<{
+        referrer: string;
+        count: number;
+      }>
+    >(),
 
     // Geographic Distribution (JSON object)
     topCountries: jsonb('top_countries').$type<Record<string, number>>(),
@@ -256,10 +262,18 @@ export const linkAnalyticsAggregates = pgTable(
 ## Enums
 
 ```typescript
-export const buttonStyleEnum = pgEnum('button_style', ['solid', 'outline', 'ghost']);
+export const buttonStyleEnum = pgEnum('button_style', [
+  'solid',
+  'outline',
+  'ghost',
+]);
 export const spacingEnum = pgEnum('spacing', ['compact', 'normal', 'relaxed']);
 export const layoutEnum = pgEnum('layout', ['vertical', 'grid']);
-export const deviceTypeEnum = pgEnum('device_type', ['desktop', 'mobile', 'tablet']);
+export const deviceTypeEnum = pgEnum('device_type', [
+  'desktop',
+  'mobile',
+  'tablet',
+]);
 ```
 
 ## Relationships

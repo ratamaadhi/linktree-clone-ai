@@ -1339,7 +1339,11 @@ import { db } from '@/lib/db';
 export function useBioPages() {
   const queryClient = useQueryClient();
 
-  const { data: bioPages, isLoading, error } = useQuery({
+  const {
+    data: bioPages,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['bio-pages'],
     queryFn: async () => {
       const pages = await db.query.bioPages.findMany({
@@ -1360,8 +1364,15 @@ export function useBioPages() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateBioPageInput }) => {
-      const [page] = await db.update(bioPages)
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateBioPageInput;
+    }) => {
+      const [page] = await db
+        .update(bioPages)
         .set(data)
         .where(eq(bioPages.id, id))
         .returning();
@@ -1406,7 +1417,11 @@ import { eq } from 'drizzle-orm';
 export function useBioLinks(bioPageId: string) {
   const queryClient = useQueryClient();
 
-  const { data: links, isLoading, error } = useQuery({
+  const {
+    data: links,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['bio-links', bioPageId],
     queryFn: async () => {
       const pageLinks = await db.query.bioLinks.findMany({
@@ -1421,7 +1436,8 @@ export function useBioLinks(bioPageId: string) {
     mutationFn: async (reorderedLinks: BioLink[]) => {
       await Promise.all(
         reorderedLinks.map((link, index) =>
-          db.update(bioLinks)
+          db
+            .update(bioLinks)
             .set({ order: index })
             .where(eq(bioLinks.id, link.id))
         )
@@ -1452,14 +1468,26 @@ import { useQuery } from '@tanstack/react-query';
 interface AnalyticsData {
   totalClicks: number;
   uniqueClicks: number;
-  topLinks: Array<{ id: string; title: string; clicks: number; percentage: number }>;
+  topLinks: Array<{
+    id: string;
+    title: string;
+    clicks: number;
+    percentage: number;
+  }>;
   deviceBreakdown: { desktop: number; mobile: number; tablet: number };
   topCountries: Record<string, number>;
   timeline: Array<{ date: string; clicks: number }>;
 }
 
-export function useAnalytics(bioPageId: string, dateRange: { startDate: Date; endDate: Date }) {
-  const { data: analytics, isLoading, error } = useQuery({
+export function useAnalytics(
+  bioPageId: string,
+  dateRange: { startDate: Date; endDate: Date }
+) {
+  const {
+    data: analytics,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['analytics', bioPageId, dateRange],
     queryFn: async (): Promise<AnalyticsData> => {
       const params = new URLSearchParams({
@@ -1467,7 +1495,9 @@ export function useAnalytics(bioPageId: string, dateRange: { startDate: Date; en
         endDate: dateRange.endDate.toISOString(),
       });
 
-      const response = await fetch(`/api/v1/bio-pages/${bioPageId}/analytics?${params}`);
+      const response = await fetch(
+        `/api/v1/bio-pages/${bioPageId}/analytics?${params}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch analytics');
       }

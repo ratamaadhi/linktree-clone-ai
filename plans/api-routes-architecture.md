@@ -33,7 +33,7 @@ export async function requireOrgAccess(request: Request, orgId: string) {
     where: and(
       eq(organizationMembers.userId, session.user.id),
       eq(organizationMembers.organizationId, orgId)
-    )
+    ),
   });
   if (!member) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -706,21 +706,27 @@ import { z } from 'zod';
 
 export const bioPageSchema = z.object({
   title: z.string().min(1).max(100),
-  slug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/),
+  slug: z
+    .string()
+    .min(3)
+    .max(50)
+    .regex(/^[a-z0-9-]+$/),
   description: z.string().max(500).optional(),
   avatarUrl: z.string().url().optional(),
   isActive: z.boolean().default(true),
-  themeConfig: z.object({
-    primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    fontFamily: z.string(),
-    buttonStyle: z.enum(['solid', 'outline', 'ghost']),
-    borderRadius: z.number().min(0).max(50),
-    spacing: z.enum(['compact', 'normal', 'relaxed']),
-    layout: z.enum(['vertical', 'grid']),
-  }).optional(),
+  themeConfig: z
+    .object({
+      primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      fontFamily: z.string(),
+      buttonStyle: z.enum(['solid', 'outline', 'ghost']),
+      borderRadius: z.number().min(0).max(50),
+      spacing: z.enum(['compact', 'normal', 'relaxed']),
+      layout: z.enum(['vertical', 'grid']),
+    })
+    .optional(),
   themePresetId: z.string().uuid().optional(),
 });
 
@@ -738,12 +744,14 @@ export const bioLinkSchema = z.object({
   imageUrl: z.string().url().optional(),
   isActive: z.boolean().default(true),
   order: z.number().int().min(0).default(0),
-  themeConfig: z.object({
-    backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    buttonStyle: z.enum(['solid', 'outline', 'ghost']),
-    borderRadius: z.number().min(0).max(50),
-  }).optional(),
+  themeConfig: z
+    .object({
+      backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      textColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+      buttonStyle: z.enum(['solid', 'outline', 'ghost']),
+      borderRadius: z.number().min(0).max(50),
+    })
+    .optional(),
 });
 
 export const bioLinkUpdateSchema = bioLinkSchema.partial();
@@ -784,28 +792,29 @@ export const themePresetUpdateSchema = themePresetSchema.partial();
 
 ```typescript
 // lib/api/rate-limit.ts
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(100, "1 m"),
+  limiter: Ratelimit.slidingWindow(100, '1 m'),
   analytics: true,
 });
 
 export async function checkRateLimit(identifier: string) {
-  const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
+  const { success, limit, reset, remaining } =
+    await ratelimit.limit(identifier);
 
   if (!success) {
     return NextResponse.json(
-      { error: { code: "RATE_LIMIT_EXCEEDED", message: "Too many requests" } },
+      { error: { code: 'RATE_LIMIT_EXCEEDED', message: 'Too many requests' } },
       {
         status: 429,
         headers: {
-          "X-RateLimit-Limit": limit.toString(),
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": reset.toString(),
-        }
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': reset.toString(),
+        },
       }
     );
   }
