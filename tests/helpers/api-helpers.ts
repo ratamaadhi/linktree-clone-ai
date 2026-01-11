@@ -109,7 +109,9 @@ export function assertApiError(
   expectedCode: string,
   expectedMessage?: string
 ): asserts response is { error: { code: string; message: string } } {
-  const errorResponse = response as { error: { code: string; message: string } };
+  const errorResponse = response as {
+    error: { code: string; message: string };
+  };
   expect(errorResponse).toHaveProperty('error');
   expect(errorResponse.error).toHaveProperty('code', expectedCode);
   if (expectedMessage) {
