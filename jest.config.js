@@ -1,4 +1,4 @@
-const nextJest = await import('next/jest');
+const { default: nextJest } = await import('next/jest.js');
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
@@ -60,9 +60,6 @@ const customJestConfig = {
     '<rootDir>/.context/',
     '<rootDir>/tests/e2e/',
   ],
-
-  // Prevent Jest from trying to load Playwright tests
-  testRegex: '(\\.|/)(spec|test)\\.(js|jsx|ts|tsx)$',
 
   // Verbose output
   verbose: true,
