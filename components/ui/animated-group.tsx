@@ -119,9 +119,7 @@ function AnimatedGroup({
       className={className}
     >
       {React.Children.map(children, (child) => (
-        <motion.div variants={itemVariants}>
-          {child}
-        </motion.div>
+        <motion.div variants={itemVariants}>{child}</motion.div>
       ))}
     </motion.div>
   );

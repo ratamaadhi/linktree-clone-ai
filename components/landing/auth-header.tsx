@@ -17,11 +17,7 @@ export function AuthHeader({
       <nav className="fixed z-20 w-full px-2">
         <div className="mx-auto mt-2 max-w-6xl rounded-2xl border bg-background/50 px-6 py-3 shadow-sm backdrop-blur-lg transition-all duration-300 lg:px-12">
           <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              aria-label="home"
-              className="flex items-center"
-            >
+            <Link href="/" aria-label="home" className="flex items-center">
               <Logo />
             </Link>
 
