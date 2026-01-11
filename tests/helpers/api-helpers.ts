@@ -3,6 +3,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { expect } from '@jest/globals';
 
 /**
  * Create a mock NextRequest for testing API routes
@@ -108,10 +109,11 @@ export function assertApiError(
   expectedCode: string,
   expectedMessage?: string
 ): asserts response is { error: { code: string; message: string } } {
-  expect(response).toHaveProperty('error');
-  expect(response.error).toHaveProperty('code', expectedCode);
+  const errorResponse = response as { error: { code: string; message: string } };
+  expect(errorResponse).toHaveProperty('error');
+  expect(errorResponse.error).toHaveProperty('code', expectedCode);
   if (expectedMessage) {
-    expect(response.error).toHaveProperty('message', expectedMessage);
+    expect(errorResponse.error).toHaveProperty('message', expectedMessage);
   }
 }
 

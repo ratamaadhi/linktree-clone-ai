@@ -61,8 +61,8 @@ const customJestConfig = {
     '<rootDir>/tests/e2e/',
   ],
 
-  // Module file extensions
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  // Prevent Jest from trying to load Playwright tests
+  testRegex: '(\\.|/)(spec|test)\\.(js|jsx|ts|tsx)$',
 
   // Verbose output
   verbose: true,
