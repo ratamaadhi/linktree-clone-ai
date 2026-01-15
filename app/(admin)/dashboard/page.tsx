@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { redirect } from 'next/navigation';
 import { authClient } from '@/lib/auth/client';

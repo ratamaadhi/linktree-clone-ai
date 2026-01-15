@@ -4,20 +4,20 @@ import { db, schema } from '@/lib/db/'; // your drizzle instance
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'pg', // PostgreSQL for both local and Neon
+    provider: 'pg',
     schema: schema,
-    usePlural: false, // Better-Auth expects singular table names
+    usePlural: false,
   }),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
   },
   session: {
-    expiresIn: 60 * 60 * 24, // 24 hours
-    updateAge: 60 * 60 * 6, // 6 hours
+    expiresIn: 60 * 60 * 24,
+    updateAge: 60 * 60 * 6,
     cookieCache: {
       enabled: true,
-      maxAge: 60 * 5, // 5 minutes
+      maxAge: 60 * 5,
     },
   },
   account: {
@@ -25,11 +25,10 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  socialProviders: {
-    // Add social providers here when needed
-    // github: {
-    //     clientId: process.env.GITHUB_CLIENT_ID!,
-    //     clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    // },
+  advanced: {
+    database: {
+      generateId: 'uuid',
+    },
   },
+  socialProviders: {},
 });
