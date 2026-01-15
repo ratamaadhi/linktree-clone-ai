@@ -6,7 +6,7 @@ bun prettier --write .
 # Run ESLint
 bun lint --fix
 
-# Run tests (only if test files exist, excluding node_modules)
-if [ -n "$(find . -path ./node_modules -prune -o -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' -type f 2>/dev/null | grep -v node_modules)" ]; then
-  bun test
+# Run unit tests (only if test files exist, excluding node_modules and e2e)
+if [ -n "$(find ./tests/unit -name '*.test.ts' -o -name '*.test.tsx' -type f 2>/dev/null)" ]; then
+  bun test tests/unit
 fi

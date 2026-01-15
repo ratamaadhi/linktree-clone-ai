@@ -111,12 +111,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -246,12 +242,8 @@
           "name": "activity_logs_organization_id_organizations_id_fk",
           "tableFrom": "activity_logs",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -259,12 +251,8 @@
           "name": "activity_logs_user_id_user_id_fk",
           "tableFrom": "activity_logs",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -400,12 +388,8 @@
           "name": "bio_links_bio_page_id_bio_pages_id_fk",
           "tableFrom": "bio_links",
           "tableTo": "bio_pages",
-          "columnsFrom": [
-            "bio_page_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bio_page_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -555,12 +539,8 @@
           "name": "bio_pages_user_id_user_id_fk",
           "tableFrom": "bio_pages",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -568,12 +548,8 @@
           "name": "bio_pages_organization_id_organizations_id_fk",
           "tableFrom": "bio_pages",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -583,9 +559,7 @@
         "bio_pages_slug_unique": {
           "name": "bio_pages_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -700,12 +674,8 @@
           "name": "invitations_organization_id_organizations_id_fk",
           "tableFrom": "invitations",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -713,12 +683,8 @@
           "name": "invitations_sender_id_user_id_fk",
           "tableFrom": "invitations",
           "tableTo": "user",
-          "columnsFrom": [
-            "sender_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sender_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -728,9 +694,7 @@
         "invitations_token_unique": {
           "name": "invitations_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -923,12 +887,8 @@
           "name": "link_analytics_bio_link_id_bio_links_id_fk",
           "tableFrom": "link_analytics",
           "tableTo": "bio_links",
-          "columnsFrom": [
-            "bio_link_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bio_link_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -936,12 +896,8 @@
           "name": "link_analytics_bio_page_id_bio_pages_id_fk",
           "tableFrom": "link_analytics",
           "tableTo": "bio_pages",
-          "columnsFrom": [
-            "bio_page_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bio_page_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1138,12 +1094,8 @@
           "name": "link_analytics_aggregates_bio_link_id_bio_links_id_fk",
           "tableFrom": "link_analytics_aggregates",
           "tableTo": "bio_links",
-          "columnsFrom": [
-            "bio_link_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bio_link_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1151,12 +1103,8 @@
           "name": "link_analytics_aggregates_bio_page_id_bio_pages_id_fk",
           "tableFrom": "link_analytics_aggregates",
           "tableTo": "bio_pages",
-          "columnsFrom": [
-            "bio_page_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bio_page_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1241,12 +1189,8 @@
           "name": "organization_members_organization_id_organizations_id_fk",
           "tableFrom": "organization_members",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1345,9 +1289,7 @@
         "organizations_slug_unique": {
           "name": "organizations_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1431,12 +1373,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1446,9 +1384,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -1561,12 +1497,8 @@
           "name": "subscriptions_organization_id_organizations_id_fk",
           "tableFrom": "subscriptions",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1576,9 +1508,7 @@
         "subscriptions_stripe_subscription_id_unique": {
           "name": "subscriptions_stripe_subscription_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "stripe_subscription_id"
-          ]
+          "columns": ["stripe_subscription_id"]
         }
       },
       "policies": {},
@@ -1698,12 +1628,8 @@
           "name": "theme_presets_user_id_user_id_fk",
           "tableFrom": "theme_presets",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1711,12 +1637,8 @@
           "name": "theme_presets_organization_id_organizations_id_fk",
           "tableFrom": "theme_presets",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1785,9 +1707,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1867,166 +1787,92 @@
     "public.subscription_status": {
       "name": "subscription_status",
       "schema": "public",
-      "values": [
-        "active",
-        "canceled",
-        "past_due",
-        "trialing"
-      ]
+      "values": ["active", "canceled", "past_due", "trialing"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "owner",
-        "admin",
-        "member",
-        "viewer"
-      ]
+      "values": ["owner", "admin", "member", "viewer"]
     },
     "public.alignment": {
       "name": "alignment",
       "schema": "public",
-      "values": [
-        "left",
-        "center",
-        "right"
-      ]
+      "values": ["left", "center", "right"]
     },
     "public.animation": {
       "name": "animation",
       "schema": "public",
-      "values": [
-        "none",
-        "fade",
-        "slide",
-        "scale"
-      ]
+      "values": ["none", "fade", "slide", "scale"]
     },
     "public.avatar_shape": {
       "name": "avatar_shape",
       "schema": "public",
-      "values": [
-        "circle",
-        "square",
-        "rounded"
-      ]
+      "values": ["circle", "square", "rounded"]
     },
     "public.avatar_size": {
       "name": "avatar_size",
       "schema": "public",
-      "values": [
-        "small",
-        "medium",
-        "large"
-      ]
+      "values": ["small", "medium", "large"]
     },
     "public.background_type": {
       "name": "background_type",
       "schema": "public",
-      "values": [
-        "solid",
-        "gradient",
-        "image"
-      ]
+      "values": ["solid", "gradient", "image"]
     },
     "public.bg_position": {
       "name": "bg_position",
       "schema": "public",
-      "values": [
-        "cover",
-        "contain",
-        "center"
-      ]
+      "values": ["cover", "contain", "center"]
     },
     "public.button_style": {
       "name": "button_style",
       "schema": "public",
-      "values": [
-        "solid",
-        "outline",
-        "ghost"
-      ]
+      "values": ["solid", "outline", "ghost"]
     },
     "public.device_type": {
       "name": "device_type",
       "schema": "public",
-      "values": [
-        "desktop",
-        "mobile",
-        "tablet"
-      ]
+      "values": ["desktop", "mobile", "tablet"]
     },
     "public.gradient_type": {
       "name": "gradient_type",
       "schema": "public",
-      "values": [
-        "linear",
-        "radial"
-      ]
+      "values": ["linear", "radial"]
     },
     "public.icon_position": {
       "name": "icon_position",
       "schema": "public",
-      "values": [
-        "left",
-        "right",
-        "none"
-      ]
+      "values": ["left", "right", "none"]
     },
     "public.icon_size": {
       "name": "icon_size",
       "schema": "public",
-      "values": [
-        "small",
-        "medium",
-        "large"
-      ]
+      "values": ["small", "medium", "large"]
     },
     "public.image_position": {
       "name": "image_position",
       "schema": "public",
-      "values": [
-        "left",
-        "right",
-        "background"
-      ]
+      "values": ["left", "right", "background"]
     },
     "public.image_size": {
       "name": "image_size",
       "schema": "public",
-      "values": [
-        "small",
-        "medium",
-        "large"
-      ]
+      "values": ["small", "medium", "large"]
     },
     "public.layout": {
       "name": "layout",
       "schema": "public",
-      "values": [
-        "vertical",
-        "grid"
-      ]
+      "values": ["vertical", "grid"]
     },
     "public.shadow": {
       "name": "shadow",
       "schema": "public",
-      "values": [
-        "none",
-        "small",
-        "medium",
-        "large"
-      ]
+      "values": ["none", "small", "medium", "large"]
     },
     "public.spacing": {
       "name": "spacing",
       "schema": "public",
-      "values": [
-        "compact",
-        "normal",
-        "relaxed"
-      ]
+      "values": ["compact", "normal", "relaxed"]
     }
   },
   "schemas": {},
